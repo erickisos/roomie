@@ -2,13 +2,13 @@ pub mod domain;
 pub mod ports;
 use domain::audio;
 use gtk::{
-    prelude::{ApplicationExt, ApplicationExtManual, ComboBoxExtManual},
+    prelude::{ApplicationExt, ApplicationExtManual},
     traits::{BoxExt, GtkWindowExt},
     Application, ApplicationWindow, Orientation,
 };
 use ports::widgets;
 
-const APP_ID: &str = "com.tliwaka.Roomie";
+const APP_ID: &str = "com.tliwaka.roomie";
 
 fn main() {
     let application = Application::builder().application_id(APP_ID).build();
@@ -18,10 +18,8 @@ fn main() {
 
 fn start_app(app: &Application) {
     // let list_store_inputs = ListStore::from(audio::get_inputlist());
-    let dropdown_inputs = widgets::build_dropdown(audio::get_inputlist().unwrap());
-    dropdown_inputs.set_active(Some(0));
-    let dropdown_outputs = widgets::build_dropdown(audio::get_outputlist().unwrap());
-    dropdown_outputs.set_active(Some(0));
+    let dropdown_inputs = widgets::build_dropdown(audio::get_inputlist());
+    let dropdown_outputs = widgets::build_dropdown(audio::get_outputlist());
     // Add buttons to `gtk_box`
     let gtk_box = gtk::Box::builder()
         .orientation(Orientation::Vertical)

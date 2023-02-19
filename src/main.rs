@@ -1,4 +1,5 @@
-use cpal::traits::{DeviceTrait, HostTrait};
+pub mod domain;
+
 use std::cell::Cell;
 use std::rc::Rc;
 
@@ -32,8 +33,6 @@ fn start_app(app: &Application) {
         .margin_end(12)
         .build();
 
-    print_hosts();
-
     // Reference-counted object with inner mutability
     let number: Rc<Cell<i32>> = Rc::new(Cell::new(0));
     // Connect callbacks
@@ -63,17 +62,4 @@ fn start_app(app: &Application) {
         .child(&gtk_box)
         .build();
     window.present();
-}
-
-fn print_hosts() {
-    for host_id in cpal::available_hosts() {
-        let host = cpal::host_from_id(host_id).unwrap();
-        for (device_index, device) in host.input_devices().unwrap().enumerate() {
-            println!("{} -> {}", device_index, device.name().unwrap());
-        }
-
-        for (device_index, device) in host.output_devices().unwrap().enumerate() {
-            println!("{} -> {}", device_index, device.name().unwrap());
-        }
-    }
 }

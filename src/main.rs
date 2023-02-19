@@ -1,27 +1,79 @@
+use cpal::traits::{DeviceTrait, HostTrait};
+use std::cell::Cell;
+use std::rc::Rc;
+
+use glib::clone;
 use gtk::prelude::*;
-use gtk::{Application, ApplicationWindow, Button};
+use gtk::{self, glib, Application, ApplicationWindow, Button, Orientation};
+
+const APP_ID: &str = "com.tliwaka.Roomie";
 
 fn main() {
-    let application = Application::builder()
-        .application_id("com.tliwaka.Roomie")
+    let application = Application::builder().application_id(APP_ID).build();
+
+    application.connect_activate(start_app);
+    application.run();
+}
+
+fn start_app(app: &Application) {
+    // Create two buttons
+    let button_increase = Button::builder()
+        .label("Increase")
+        .margin_top(12)
+        .margin_bottom(12)
+        .margin_start(12)
+        .margin_end(12)
+        .build();
+    let button_decrease = Button::builder()
+        .label("Decrease")
+        .margin_top(12)
+        .margin_bottom(12)
+        .margin_start(12)
+        .margin_end(12)
         .build();
 
-    application.connect_activate(|app| {
-        let window = ApplicationWindow::builder()
-            .application(app)
-            .title("Roomie")
-            .default_width(350)
-            .default_height(70)
-            .build();
+    print_hosts();
 
-        let button = Button::with_label("Click me!");
-        button.connect_clicked(|_| {
-            eprintln!("Clicked!");
-        });
-        window.set_child(Some(&button));
+    // Reference-counted object with inner mutability
+    let number: Rc<Cell<i32>> = Rc::new(Cell::new(0));
+    // Connect callbacks
+    // When a button is clicked, `number` will be changed
+    button_increase.connect_clicked(clone!(@weak number, @strong button_decrease =>
+        move |_| {
+            number.set(number.get() + 1);
+            button_decrease.set_label(&number.get().to_string());
+    }));
+    button_decrease.connect_clicked(clone!(@strong button_increase =>
+        move |_| {
+            number.set(number.get() - 1);
+            button_increase.set_label(&number.get().to_string());
+    }));
 
-        window.show();
-    });
+    // Add buttons to `gtk_box`
+    let gtk_box = gtk::Box::builder()
+        .orientation(Orientation::Vertical)
+        .build();
+    gtk_box.append(&button_increase);
+    gtk_box.append(&button_decrease);
 
-    application.run();
+    // Create a window
+    let window = ApplicationWindow::builder()
+        .application(app)
+        .title("Roomie")
+        .child(&gtk_box)
+        .build();
+    window.present();
+}
+
+fn print_hosts() {
+    for host_id in cpal::available_hosts() {
+        let host = cpal::host_from_id(host_id).unwrap();
+        for (device_index, device) in host.input_devices().unwrap().enumerate() {
+            println!("{} -> {}", device_index, device.name().unwrap());
+        }
+
+        for (device_index, device) in host.output_devices().unwrap().enumerate() {
+            println!("{} -> {}", device_index, device.name().unwrap());
+        }
+    }
 }

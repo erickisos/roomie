@@ -18,8 +18,10 @@ fn main() {
 
 fn start_app(app: &Application) {
     // let list_store_inputs = ListStore::from(audio::get_inputlist());
-    let dropdown_inputs = widgets::build_dropdown(audio::get_inputlist());
-    let dropdown_outputs = widgets::build_dropdown(audio::get_outputlist());
+    let inputs = audio::get_inputlist();
+    let outputs = audio::get_outputlist();
+    let dropdown_inputs = widgets::build_dropdown(inputs);
+    let dropdown_outputs = widgets::build_dropdown(outputs);
     // Add buttons to `gtk_box`
     let gtk_box = gtk::Box::builder()
         .orientation(Orientation::Vertical)

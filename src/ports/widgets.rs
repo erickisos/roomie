@@ -1,11 +1,9 @@
-use cpal::traits::DeviceTrait;
+use cpal::{traits::DeviceTrait, Device, Devices, DevicesError};
 use gtk::{prelude::ComboBoxExtManual, ComboBoxText};
+use std::iter::Filter;
 
 pub(crate) fn build_dropdown(
-    devices_list: Result<
-        std::iter::Filter<cpal::Devices, fn(&cpal::Device) -> bool>,
-        cpal::DevicesError,
-    >,
+    devices_list: Result<Filter<Devices, fn(&Device) -> bool>, DevicesError>,
 ) -> ComboBoxText {
     let combo_box = ComboBoxText::new();
     for device in devices_list.unwrap() {

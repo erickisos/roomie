@@ -1,12 +1,12 @@
 use cpal::{self, traits::HostTrait, Devices, DevicesError};
 
-fn get_inputlist(
+pub(crate) fn get_inputlist(
 ) -> Result<std::iter::Filter<Devices, for<'r> fn(&'r cpal::Device) -> bool>, DevicesError> {
     let host = cpal::default_host();
     return host.input_devices();
 }
 
-fn get_outputlist(
+pub(crate) fn get_outputlist(
 ) -> Result<std::iter::Filter<Devices, for<'r> fn(&'r cpal::Device) -> bool>, DevicesError> {
     let host = cpal::default_host();
     return host.output_devices();

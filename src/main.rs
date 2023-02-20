@@ -1,10 +1,11 @@
+pub mod controllers;
 pub mod domain;
 pub mod ports;
 use domain::audio;
 use gtk::{
     prelude::{ApplicationExt, ApplicationExtManual},
-    traits::{BoxExt, GtkWindowExt},
-    Application, ApplicationWindow, Orientation,
+    traits::GtkWindowExt,
+    Application, ApplicationWindow,
 };
 use ports::widgets;
 
@@ -17,22 +18,13 @@ fn main() {
 }
 
 fn start_app(app: &Application) {
-    // let list_store_inputs = ListStore::from(audio::get_inputlist());
     let inputs = audio::get_inputlist();
     let outputs = audio::get_outputlist();
-    let dropdown_inputs = widgets::build_dropdown(inputs);
-    let dropdown_outputs = widgets::build_dropdown(outputs);
-    // Add buttons to `gtk_box`
-    let gtk_box = gtk::Box::builder()
-        .orientation(Orientation::Vertical)
-        .build();
-    gtk_box.append(&dropdown_inputs);
-    gtk_box.append(&dropdown_outputs);
-    // Create a window
+    let main_box = widgets::build_layout(inputs, outputs);
     let window = ApplicationWindow::builder()
         .application(app)
         .title("Roomie")
-        .child(&gtk_box)
+        .child(&main_box)
         .build();
     window.present();
 }

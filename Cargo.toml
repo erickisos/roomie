@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 cpal = "0.15.0"
 gtk = { version = "0.4.8", package = "gtk4" }
+rodio = "*"
+rand = "*"

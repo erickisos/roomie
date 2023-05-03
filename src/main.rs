@@ -1,7 +1,7 @@
 pub mod controllers;
 pub mod domain;
 pub mod ports;
-use domain::audio;
+use domain::audio::general;
 use gtk::{
     prelude::{ApplicationExt, ApplicationExtManual},
     traits::GtkWindowExt,
@@ -18,8 +18,8 @@ fn main() {
 }
 
 fn start_app(app: &Application) {
-    let inputs = audio::get_inputlist();
-    let outputs = audio::get_outputlist();
+    let inputs = general::get_inputlist();
+    let outputs = general::get_outputlist();
     let main_box = widgets::build_layout(inputs, outputs);
     let window = ApplicationWindow::builder()
         .application(app)
